@@ -1,10 +1,10 @@
 namespace ProxmoxJumpProxy.Daemon;
 
-public class Worker : BackgroundService
+public class HostListener : BackgroundService
 {
-    private readonly ILogger<Worker> _logger;
+    private readonly ILogger<HostListener> _logger;
 
-    public Worker(ILogger<Worker> logger)
+    public HostListener(ILogger<HostListener> logger)
     {
         _logger = logger;
     }

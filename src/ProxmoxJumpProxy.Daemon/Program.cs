@@ -1,9 +1,9 @@
 using ProxmoxJumpProxy.Daemon;
 
-IHost host = Host.CreateDefaultBuilder(args)
+var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
-        services.AddHostedService<Worker>();
+        services.AddHostedService<HostListener>();
     })
     .Build();
 
