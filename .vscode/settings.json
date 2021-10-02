@@ -1,5 +1,11 @@
 {
   "[typescript]": {
     "editor.formatOnSave": true
-  }
+  },
+  "azureFunctions.deploySubpath": "src/ProxmoxJumpProxy.Host/bin/Release/net6.0/publish",
+  "azureFunctions.projectLanguage": "C#",
+  "azureFunctions.projectRuntime": "~3",
+  "debug.internalConsoleOptions": "neverOpen",
+  "azureFunctions.projectSubpath": "src/ProxmoxJumpProxy.Host",
+  "azureFunctions.preDeployTask": "publish (functions)"
 }
