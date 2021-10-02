@@ -11,6 +11,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProxmoxJumpProxy.Host", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infra", "infra\Infra.csproj", "{D0F7F40C-E9C1-414D-A492-81CF857E2E04}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5B0DF43F-4A2C-4132-BE58-8258FBD99C67}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		.envrc = .envrc
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		.nvmrc = .nvmrc
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProxmoxJumpProxy.Models", "src\ProxmoxJumpProxy.Models\ProxmoxJumpProxy.Models.csproj", "{D653B1BE-5BDF-466F-8DAF-CC5159B0DACB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{362C4242-AA5F-4511-A934-D7E9F0B11BB7}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		global.json = global.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,9 +49,14 @@ Global
 		{D0F7F40C-E9C1-414D-A492-81CF857E2E04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0F7F40C-E9C1-414D-A492-81CF857E2E04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0F7F40C-E9C1-414D-A492-81CF857E2E04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D653B1BE-5BDF-466F-8DAF-CC5159B0DACB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D653B1BE-5BDF-466F-8DAF-CC5159B0DACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D653B1BE-5BDF-466F-8DAF-CC5159B0DACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D653B1BE-5BDF-466F-8DAF-CC5159B0DACB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4B2746DB-7F38-4F87-A5E7-CFF9E9D3AE93} = {D4D0E9D2-2996-4304-B8C9-D37C542A86B7}
 		{9E6AD38E-D6E7-402A-B786-7AE1C04F38F3} = {D4D0E9D2-2996-4304-B8C9-D37C542A86B7}
+		{D653B1BE-5BDF-466F-8DAF-CC5159B0DACB} = {D4D0E9D2-2996-4304-B8C9-D37C542A86B7}
 	EndGlobalSection
 EndGlobal

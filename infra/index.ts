@@ -49,8 +49,7 @@ const container = new storage.BlobContainer('container', {
 const functionDirectory = path.join(__dirname, '..', 'src', 'ProxmoxJumpProxy.Host');
 const publishDirectory = path.join(functionDirectory, 'bin', 'Debug', 'net6.0', 'publish');
 if (!fs.existsSync(publishDirectory)) {
-  console.log(publishDirectory);
-  throw new Error("Function app hasn't been built");
+  throw new Error("Function app hasn't been published");
 }
 
 const dotnetBlob = new storage.Blob('dotnetBlob', {
@@ -70,6 +69,16 @@ const plan = new web.AppServicePlan('functions', {
 });
 
 const dotnetBlobSignedURL = signedBlobReadUrl(dotnetBlob, container, storageAccount, resourceGroup);
+export const signalrConnectionString = pulumi
+  .all([resourceGroup.name, hubs.name])
+  .apply(([resourceGroupName, resourceName]) =>
+    signalr.listSignalRKeys({
+      resourceGroupName,
+      resourceName,
+    })
+  )
+  .apply((keys) => keys.primaryConnectionString ?? '')
+  .apply((connectionString) => pulumi.secret(connectionString));
 
 const app = new web.WebApp('functions', {
   name: `unmango-proxmox-functions${isProd ? '' : `-${stack}`}`,
@@ -81,9 +90,11 @@ const app = new web.WebApp('functions', {
       { name: 'runtime', value: 'dotnet' },
       { name: 'FUNCTIONS_WORKER_RUNTIME', value: 'dotnet' },
       { name: 'WEBSITE_RUN_FROM_PACKAGE', value: dotnetBlobSignedURL },
-      { name: 'FUNCTIONS_EXTENSION_VERSION', value: '~3' },
+      { name: 'FUNCTIONS_EXTENSION_VERSION', value: '~4' },
+      { name: 'AzureSignalRConnectionString', value: signalrConnectionString },
     ],
   },
 });
 
-export const hubhost = hubs.hostName;
+export const functionHostname = app.defaultHostName;
+export const signalRHostname = hubs.hostName;

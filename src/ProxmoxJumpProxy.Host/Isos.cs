@@ -1,43 +1,36 @@
-using System.IO;
-using System.Net.Http;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
+using ProxmoxJumpProxy.Models;
 
 namespace ProxmoxJumpProxy.Host;
 
-public static class Isos
+[PublicAPI]
+public class Isos : ServerlessHub
 {
     [FunctionName("negotiate")]
-    public static SignalRConnectionInfo Negotiate(
-        [HttpTrigger(AuthorizationLevel.Anonymous)] HttpRequest req,
-        [SignalRConnectionInfo(HubName = "serverlessSample")] SignalRConnectionInfo connectionInfo)
+    public SignalRConnectionInfo Negotiate([HttpTrigger(AuthorizationLevel.Anonymous)] HttpRequest req)
     {
-        return connectionInfo;
+        return Negotiate(req.Headers["x-ms-signalr-user-id"], GetClaims(req.Headers["Authorization"]));
     }
 
     [FunctionName("Isos")]
-    public static async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-        [SignalR(HubName = "Isos")] IAsyncCollector<SignalRMessage> signalRMessages,
-        ILogger log)
+    public async Task<IActionResult> Post(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request,
+        ILogger log,
+        CancellationToken cancellationToken)
     {
-        var httpClient = new HttpClient();
-        var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/azure/azure-signalr");
-        request.Headers.UserAgent.ParseAdd("Serverless");
-        var response = await httpClient.SendAsync(request);
-        var result = JsonConvert.DeserializeObject<GitResult>(await response.Content.ReadAsStringAsync());
-        await signalRMessages.AddAsync(
-            new SignalRMessage
-            {
-                Target = "newMessage",
-                Arguments = new[] { $"" }
-            });
+        var createRequest = await request.ReadFromJsonAsync<CreateIsoRequest>(cancellationToken);
+        await Clients.All.SendAsync(Operations.CreateIso, createRequest, cancellationToken);
+
+        return new OkResult();
     }
 }

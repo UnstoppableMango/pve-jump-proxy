@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="install Host" type="js.build_tools.npm">
-    <package-json value="$PROJECT_DIR$/src/ProxmoxJumpProxy.Host/package.json" />
+    <package-json value="$PROJECT_DIR$/infra/package.json" />
     <command value="install" />
     <node-interpreter value="project" />
     <envs />
