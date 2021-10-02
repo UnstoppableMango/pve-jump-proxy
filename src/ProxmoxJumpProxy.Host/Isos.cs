@@ -22,9 +22,13 @@ public class Isos : ServerlessHub
         return Negotiate(req.Headers["x-ms-signalr-user-id"], GetClaims(req.Headers["Authorization"]));
     }
 
-    [FunctionName("Isos")]
-    public async Task<IActionResult> Post(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request,
+    [FunctionName(nameof(UploadIso))]
+    public async Task<IActionResult> UploadIso(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "nodes/{node}/storage/{storage}/upload/{name}")]
+        HttpRequest request,
+        string node,
+        string storage,
+        string name,
         ILogger log,
         CancellationToken cancellationToken)
     {

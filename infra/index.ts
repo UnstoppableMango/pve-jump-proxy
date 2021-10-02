@@ -1,8 +1,9 @@
 import * as pulumi from '@pulumi/pulumi';
-import * as web from '@pulumi/azure-native/web';
+import * as insights from '@pulumi/azure-native/insights';
 import * as resources from '@pulumi/azure-native/resources';
 import * as signalr from '@pulumi/azure-native/signalrservice';
 import * as storage from '@pulumi/azure-native/storage';
+import * as web from '@pulumi/azure-native/web';
 import * as fs from 'fs';
 import * as path from 'path';
 import { pascalCase } from 'pascal-case';
@@ -80,6 +81,13 @@ export const signalrConnectionString = pulumi
   .apply((keys) => keys.primaryConnectionString ?? '')
   .apply((connectionString) => pulumi.secret(connectionString));
 
+const appInsights = new insights.Component('appinsights', {
+  resourceName: `appinsights${isProd ? '' : `-${stack}`}`,
+  resourceGroupName: resourceGroup.name,
+  applicationType: insights.ApplicationType.Web,
+  kind: insights.Kind.Shared,
+});
+
 const app = new web.WebApp('functions', {
   name: `unmango-proxmox-functions${isProd ? '' : `-${stack}`}`,
   resourceGroupName: resourceGroup.name,
@@ -87,11 +95,13 @@ const app = new web.WebApp('functions', {
   kind: 'FunctionApp',
   siteConfig: {
     appSettings: [
-      { name: 'runtime', value: 'dotnet' },
-      { name: 'FUNCTIONS_WORKER_RUNTIME', value: 'dotnet' },
-      { name: 'WEBSITE_RUN_FROM_PACKAGE', value: dotnetBlobSignedURL },
-      { name: 'FUNCTIONS_EXTENSION_VERSION', value: '~4' },
+      { name: 'APPINSIGHTS_INSTRUMENTATIONKEY', value: appInsights.instrumentationKey },
       { name: 'AzureSignalRConnectionString', value: signalrConnectionString },
+      { name: 'AzureSignalRServiceTransportType', value: 'Transient' },
+      { name: 'FUNCTIONS_EXTENSION_VERSION', value: '~4' },
+      { name: 'FUNCTIONS_WORKER_RUNTIME', value: 'dotnet' },
+      { name: 'runtime', value: 'dotnet' },
+      { name: 'WEBSITE_RUN_FROM_PACKAGE', value: dotnetBlobSignedURL },
     ],
   },
 });
