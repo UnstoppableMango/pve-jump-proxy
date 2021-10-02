@@ -49,6 +49,7 @@ const container = new storage.BlobContainer('container', {
 const functionDirectory = path.join(__dirname, '..', 'src', 'ProxmoxJumpProxy.Host');
 const publishDirectory = path.join(functionDirectory, 'bin', 'Debug', 'net6.0', 'publish');
 if (!fs.existsSync(publishDirectory)) {
+  console.log(publishDirectory);
   throw new Error("Function app hasn't been built");
 }
 
