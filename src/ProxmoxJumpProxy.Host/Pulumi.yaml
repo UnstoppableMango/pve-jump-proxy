@@ -1,3 +1,0 @@
-name: ProxmoxJumpProxy.Host
-runtime: nodejs
-description: Azure SignalR jump proxy host

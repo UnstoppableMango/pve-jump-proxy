@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RestorePackages>false</RestorePackages>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <None Remove="node_modules/**" />
+  </ItemGroup>
+  
+  <Target Name="Build" />
+  <Target Name="Publish" />
+</Project>

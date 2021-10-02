@@ -3,7 +3,10 @@ import * as web from '@pulumi/azure-native/web';
 import * as resources from '@pulumi/azure-native/resources';
 import * as signalr from '@pulumi/azure-native/signalrservice';
 import * as storage from '@pulumi/azure-native/storage';
+import * as fs from 'fs';
+import * as path from 'path';
 import { pascalCase } from 'pascal-case';
+import { signedBlobReadUrl } from './helpers';
 
 const stack = pulumi.getStack();
 const stackUpper = pascalCase(stack);
@@ -37,6 +40,25 @@ const storageAccount = new storage.StorageAccount('functionsa', {
   },
 });
 
+const container = new storage.BlobContainer('container', {
+  accountName: storageAccount.name,
+  resourceGroupName: resourceGroup.name,
+  publicAccess: storage.PublicAccess.None,
+});
+
+const functionDirectory = path.join(__dirname, '..', 'src', 'ProxmoxJumpProxy.Host');
+const publishDirectory = path.join(functionDirectory, 'bin', 'Debug', 'net6.0', 'publish');
+if (!fs.existsSync(publishDirectory)) {
+  throw new Error("Function app hasn't been built");
+}
+
+const dotnetBlob = new storage.Blob('dotnetBlob', {
+  resourceGroupName: resourceGroup.name,
+  accountName: storageAccount.name,
+  containerName: container.name,
+  source: new pulumi.asset.FileArchive(publishDirectory),
+});
+
 const plan = new web.AppServicePlan('functions', {
   name: 'functions-asp',
   resourceGroupName: resourceGroup.name,
@@ -46,11 +68,21 @@ const plan = new web.AppServicePlan('functions', {
   },
 });
 
+const dotnetBlobSignedURL = signedBlobReadUrl(dotnetBlob, container, storageAccount, resourceGroup);
+
 const app = new web.WebApp('functions', {
   name: `unmango-proxmox-functions${isProd ? '' : `-${stack}`}`,
   resourceGroupName: resourceGroup.name,
   serverFarmId: plan.id,
   kind: 'FunctionApp',
+  siteConfig: {
+    appSettings: [
+      { name: 'runtime', value: 'dotnet' },
+      { name: 'FUNCTIONS_WORKER_RUNTIME', value: 'dotnet' },
+      { name: 'WEBSITE_RUN_FROM_PACKAGE', value: dotnetBlobSignedURL },
+      { name: 'FUNCTIONS_EXTENSION_VERSION', value: '~3' },
+    ],
+  },
 });
 
-export const hostname = hubs.hostName;
+export const hubhost = hubs.hostName;
