@@ -2,5 +2,8 @@ namespace ProxmoxJumpProxy.Models;
 
 public static class Operations
 {
-    public const string CreateIso = "createIso";
+    public static class NodeStorage
+    {
+        public const string UploadContent = "uploadContent";
+    }
 }

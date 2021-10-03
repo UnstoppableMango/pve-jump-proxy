@@ -1,10 +1,17 @@
 ﻿{
   "profiles": {
-    "ProxmoxJumpProxy.Daemon": {
+    "Daemon": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    "Local Daemon": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Local"
       }
     }
   }

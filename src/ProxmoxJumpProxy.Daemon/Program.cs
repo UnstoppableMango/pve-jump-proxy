@@ -16,7 +16,9 @@ static HubConnection CreateHubConnection(IServiceProvider services)
 {
     var options = services.GetRequiredService<IOptions<DaemonOptions>>();
     return new HubConnectionBuilder()
-        .WithUrl(options.Value.SignalRUrl)
+        .WithUrl(options.Value.SignalRUrl, options => {
+
+        })
         .ConfigureLogging(builder => {
             builder.AddConsole();
             builder.AddDebug();

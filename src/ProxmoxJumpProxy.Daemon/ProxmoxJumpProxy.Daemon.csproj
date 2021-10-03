@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.10" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0-rc.1.21451.13" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProxmoxJumpProxy.Models\ProxmoxJumpProxy.Models.csproj" />
+  </ItemGroup>
 </Project>
